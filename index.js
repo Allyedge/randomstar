@@ -1,4 +1,6 @@
-const { readFileSync, writeFileSync, existsSync } = require("node:fs");
+const { readFileSync, writeFileSync, existsSync, mkdirSync } = require("node:fs");
+const os = require("node:os");
+const path = require("node:path");
 
 (async () => {
     try {
@@ -12,10 +14,12 @@ const { readFileSync, writeFileSync, existsSync } = require("node:fs");
 
         let allStars = [];
         const oneHourInMs = 60 * 60 * 1000;
+        const cacheDir = path.join(os.homedir(), ".randomstar");
+        const cacheFile = path.join(cacheDir, "data.json");
 
-        if (existsSync("~/.randomstar/data.json")) {
+        if (existsSync(cacheFile)) {
             try {
-                const cachedData = JSON.parse(readFileSync("~/.randomstar/data.json", "utf-8"));
+                const cachedData = JSON.parse(readFileSync(cacheFile, "utf-8"));
                 if (Date.now() - cachedData.timeInserted <= oneHourInMs) {
                     allStars = JSON.parse(cachedData.data);
                 }
@@ -55,9 +59,10 @@ const { readFileSync, writeFileSync, existsSync } = require("node:fs");
         };
 
         try {
-            writeFileSync("~/.randomstar/data.json", JSON.stringify(data, null, 4));
+            mkdirSync(cacheDir, { recursive: true });
+            writeFileSync(cacheFile, JSON.stringify(data, null, 4));
         } catch (err) {
-            console.error("Error writing cache file: ", err);
+            console.error("Error writing cache file:", err);
         }
 
         const repo = allStars[Math.floor(Math.random() * allStars.length)];
