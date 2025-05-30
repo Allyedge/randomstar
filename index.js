@@ -13,9 +13,9 @@ const { readFileSync, writeFileSync, existsSync } = require("node:fs");
         let allStars = [];
         const oneHourInMs = 60 * 60 * 1000;
 
-        if (existsSync("./data.json")) {
+        if (existsSync("~/.randomstar/data.json")) {
             try {
-                const cachedData = JSON.parse(readFileSync("./data.json", "utf-8"));
+                const cachedData = JSON.parse(readFileSync("~/.randomstar/data.json", "utf-8"));
                 if (Date.now() - cachedData.timeInserted <= oneHourInMs) {
                     allStars = JSON.parse(cachedData.data);
                 }
@@ -55,7 +55,7 @@ const { readFileSync, writeFileSync, existsSync } = require("node:fs");
         };
 
         try {
-            writeFileSync("./data.json", JSON.stringify(data, null, 4));
+            writeFileSync("~/.randomstar/data.json", JSON.stringify(data, null, 4));
         } catch (err) {
             console.error("Error writing cache file: ", err);
         }
